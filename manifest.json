@@ -1,7 +1,7 @@
 {
-  "name": "LUA Web IDE",
-  "short_name": "LUA IDE",
-  "description": "A Code Editor for LUA on ESP8266",
+  "name": "GSatMicro Web IDE",
+  "short_name": "GSatMicro IDE",
+  "description": "A Code Editor for GSatMicro",
   "version": "0.1.7",
   "app": {
     "background": {
