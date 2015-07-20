@@ -5,14 +5,14 @@
  This Source Code is subject to the terms of the Mozilla Public
  License, v2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
- 
+
  ------------------------------------------------------------------
   VT100 terminal window
  ------------------------------------------------------------------
 **/
 "use strict";
 (function(){
-  var onInputData = function(d){}; // the handler for character data from user 
+  var onInputData = function(d){}; // the handler for character data from user
 
   var displayTimeout = null;
   var waitForChar = "";
@@ -22,23 +22,23 @@
   // Text to be displayed in the terminal
   //var termText = [ "" ];
   // Map of terminal line number to text to display before it
-  //var termExtraText = {}; 
-  
+  //var termExtraText = {};
+
   //var termCursorX = 0;
   //var termCursorY = 0;
-  //var termControlChars = [];    
+  //var termControlChars = [];
 
   // maximum lines on the terminal
   //var MAX_LINES = 2048;
-  
-  function init() 
+
+  function init()
   {
     // Add buttons
-    if (LUA.Core.App) LUA.Core.App.addIcon({ 
+    if (LUA.Core.App) LUA.Core.App.addIcon({
       id: "clearScreen",
-      icon: "clear", 
-      title : "Clear Screen", 
-      order: -100, 
+      icon: "clear",
+      title : "Clear Screen",
+      order: -100,
       area: {
         name: "terminal",
         position: "top"
@@ -65,7 +65,7 @@
       callback(data);
     },module:"terminal"});
   };
-  
+
   var clearTerminal = function() {
     $("#terminal").html("");
     LUA.callProcessor("terminalClear");
@@ -74,9 +74,9 @@
   function trimRight(str) {
     var s = str.length-1;
     while (s>0 && str[s]==" ") s--;
-    return str.substr(0,s+1);      
+    return str.substr(0,s+1);
   }
-  
+
   /// Called when data comes OUT of LUA INTO the terminal
   function outputDataHandler(readData) {
     var bufString = "",bufView=new Uint8Array(readData);
@@ -90,7 +90,12 @@
       }
     }
     if(LUA.checkProcessor("getWatched")){searchData(bufString);}
-    else{ $("#terminal").html($("#terminal").html() + bufString.replace(/\n/g,"<br>"));}
+    else{
+		var term = $('#terminal');
+		term.html(term.html() + bufString.replace(/\n/g,"<br>")); // add received data to terminal screen
+		term.scrollTop(term.prop('scrollHeight')); // scroll to bottom
+		//$("#terminal").html($("#terminal").html() + bufString.replace(/\n/g,"<br>"));
+    }
   }
 
   var receivedData = "";
@@ -98,7 +103,7 @@
     var si,ei,r = false;
     receivedData += data;
     si = receivedData.indexOf("<<<<<");
-    if(si >= 0){ 
+    if(si >= 0){
       receivedData = receivedData.substr(si);
       ei = receivedData.indexOf(">>>>>");
       if(ei > 0){
@@ -111,7 +116,7 @@
     else{ if(receivedData.length > 200) receivedData = receivedData.substr(100); }
     return r;
   }
-  
+
   /// Claim input and output of the Serial port
   function grabSerialPort() {
     // Ensure that keypresses go direct to the LUA device
@@ -125,7 +130,7 @@
 
   /// Give the terminal focus
   //function focus() {
-  //  $("#terminalfocus").focus(); 
+  //  $("#terminalfocus").focus();
   //};
   function setWaitFor(waitFor,duration,callback){
     waitForChar = waitFor;
@@ -139,7 +144,7 @@
       //focus : focus, // Give this focus
       grabSerialPort : grabSerialPort,
       outputDataHandler : outputDataHandler,
-      setWaitFor : setWaitFor   
+      setWaitFor : setWaitFor
   };
 
 })();
