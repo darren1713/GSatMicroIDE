@@ -63,7 +63,7 @@
 						// use raw code for file saving, don't LUAfy it
 						var cmd = 'f = io.open("/wo/script.lua")' + "\n";
 						cmd += "while true do\n";
-						cmd += "local line = f:read(\"*|\")\n";
+						cmd += "local line = f:read(\"*l\")\n";
 						cmd += "if line == nil then break end\n";
 						cmd += "print(line)\n";
 						cmd += "end\n";
