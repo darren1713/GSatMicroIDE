@@ -1,6 +1,6 @@
 /**
  Copyright 2015 Juergen Marsch (juergenmarsch@googlemail.com)
- Based on 
+ Based on
    Copyright 2012 Google Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
     // wrong chrome version
     console.log("Chrome does NOT have post-M33 serial API");
     return;
-  }  
+  }
 
   function init() {
     LUA.Core.Config.add("BAUD_RATE", {
@@ -51,17 +51,17 @@ Author: Gordon Williams (gw@pur3.co.uk)
       name : "Debug Serial Send",
       description : "Logs chars sent to serial port",
       type : "boolean",
-      defaultValue : false 
+      defaultValue : false
     });
     LUA.Core.Config.add("Debug_SerialReceive",{
       section : "Communications",
       name : "Debug Serial Receive",
       description : "Logs chars received from serial port",
       type : "boolean",
-      defaultValue : false 
+      defaultValue : false
     });
-  }  
-  
+  }
+
   var connectionInfo;
   var readListener;
   var connectedPort; // unused?
@@ -74,7 +74,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
     //LUA.Plugins.LUAfile.setSerial(baudRate,LUA.Config.Serial_Echo);
   }
   function setEcho(echo,callback){ LUA.Core.Send.setSerial(9600,echo,callback); }
-  
+
   var startListening=function(callback) {
     var oldListener = readListener;
     readListener = callback;
@@ -84,7 +84,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
   var getPorts=function(callback) {
     chrome.serial.getDevices(function(devices) {
 
-      var prefix = "";    
+      var prefix = "";
       if (navigator.userAgent.indexOf("Linux")>=0) {
         hasSlashes = false;
         devices.forEach(function(device) { if (device.path.indexOf("/")>=0) hasSlashes=true; });
@@ -96,10 +96,10 @@ Author: Gordon Williams (gw@pur3.co.uk)
       }));
     });
   };
-  
+
   var openSerial=function(serialPort, openCallback, disconnectCallback) {
     connectionDisconnectCallback = disconnectCallback;
-    chrome.serial.connect(serialPort, {bitrate: parseInt(LUA.Config.BAUD_RATE)}, 
+    chrome.serial.connect(serialPort, {bitrate: parseInt(LUA.Config.BAUD_RATE)},
       function(cInfo) {
         if (!cInfo) {
           console.log("Unable to open device (connectionInfo="+cInfo+")");
@@ -109,14 +109,14 @@ Author: Gordon Williams (gw@pur3.co.uk)
           connectedPort = serialPort;
           LUA.callProcessor("connected", undefined, function() {
             openCallback(cInfo);
-          });          
-        }        
+          });
+        }
     });
   };
 
   var writeSerialDirect = function(str,callback) {
     if(LUA.Config.Debug_SerialSend === true){ console.log("> >",str);}
-    chrome.serial.send(connectionInfo.connectionId, str2ab(str), function(a) {callback(a.bytesSent);}); 
+    chrome.serial.send(connectionInfo.connectionId, str2ab(str), function(a) {callback(a.bytesSent);});
   };
 
   var str2ab=function(str) {
@@ -127,13 +127,13 @@ Author: Gordon Williams (gw@pur3.co.uk)
     }
     return buf;
   };
-  
+
   var closeSerial=function(callback) {
    writeData = undefined;
 
    connectionDisconnectCallback = undefined;
    if (connectionInfo) {
-     chrome.serial.disconnect(connectionInfo.connectionId, 
+     chrome.serial.disconnect(connectionInfo.connectionId,
       function(result) {
         connectionInfo=null;
         LUA.callProcessor("disconnected");
@@ -141,7 +141,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
       });
     }
   };
-   
+
   var isConnected = function() {
     return connectionInfo!=null && connectionInfo.connectionId>=0;
   };
@@ -156,7 +156,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
       if(wd.length === 1) {
         writeSerialDirect(writeData,function(bs){
           writeData = "";
-          if(callback) callback();            
+          if(callback) callback();
         });
       }
       else{
@@ -168,11 +168,16 @@ Author: Gordon Williams (gw@pur3.co.uk)
         wd.shift();
         writeData = wd.join("\n");
         if(wd.length > 0){ setTimeout(function(){sendIt();},500); }
-        else{ console.log(">> All sent"); if(callback) callback();}          
+        else{ console.log(">> All sent"); if(callback) callback();}
       }
     }
     sendIt();
   }
+
+  function connectionDebug() {
+	  console.log(connectionInfo);
+  }
+
   function writeSerialByLine(data,waitFor,callback){
     if(!isConnected()) return;
     if (writeData === undefined) writeData = data; else writeData += data;
@@ -200,7 +205,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
     }
     sendIt();
   }
-  
+
   // ----------------------------------------------------------
   chrome.serial.onReceive.addListener(function(receiveInfo) {
     if (readListener!==undefined) readListener(receiveInfo.data);
@@ -220,6 +225,8 @@ Author: Gordon Williams (gw@pur3.co.uk)
     "write": writeSerial,
     "writeByLine" : writeSerialByLine,
     "close": closeSerial,
-    "setEcho" : setEcho
+    "setEcho" : setEcho,
+    "str2ab" : str2ab,
+    "debug": connectionDebug
   };
 })();
