@@ -148,6 +148,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
 
   // Throttled serial write
   var writeSerial = function(data,callback){
+	console.log('writeSerial:' + data);
     if (!isConnected()) return;
     if (writeData === undefined) writeData = data; else writeData += data;
     function sendIt(){
