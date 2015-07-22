@@ -357,6 +357,31 @@ a:hover > .menu
   user-select: text;
 }
 
+.console {
+  font-family: Fixed, monospace;
+  font-size: 12px;
+  tab-size: 4;
+  background-color: #222;
+  color: white;
+  display: block;
+  border: 0;
+}
+#lua-console {
+  width: 100%;
+  line-height: 12px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+#lua { 
+   position: absolute;
+   bottom: 0;
+   width: 100%;
+}
+div.terminal.console { 
+	top: auto;
+	
+}
+
 .terminal.focus 
 {
   background-color: #333;

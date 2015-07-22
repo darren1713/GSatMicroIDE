@@ -49,8 +49,23 @@
       }
     });
 
+    if (LUA.Core.App) LUA.Core.App.addIcon({
+	      id: "sendLuaCommand",
+	      icon: "plus",
+	      title : "Send Lua Command",
+	      order: -100,
+	      area: {
+	        name: "terminal",
+	        position: "bottom"
+	      },
+	      click: function(){
+	        sendLuaCommand();
+	      }
+    });
+
     // Add stuff we need
     $('<div id="terminal" class="terminal"></div>').appendTo(".editor--terminal .editor__canvas");
+    $('<input type="text" id="lua-console" class="console" />').appendTo($('<div id="lua" class="console"></div>').appendTo(".editor--terminal .editor__canvas"));
     //$('<textarea id="terminalfocus" class="terminal__focus" rows="1" cols="1"></textarea>').appendTo(document.body);
 
     // Populate terminal
@@ -69,6 +84,18 @@
   var clearTerminal = function() {
     $("#terminal").html("");
     LUA.callProcessor("terminalClear");
+  };
+
+  var sendLuaCommand = function() {
+	  if(LUA.Core.Serial.isConnected()){
+		  var lua = $('#lua-console');
+		  var command = lua.val() + "\n";
+		  console.log(command);
+		  LUA.Core.Serial.write(command);
+		  lua.val('');
+	  } else {
+		LUA.Core.Notifications.warning("Not connected to GSatMicro");
+	  }
   };
 
   function trimRight(str) {
