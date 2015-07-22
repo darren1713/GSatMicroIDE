@@ -60,15 +60,18 @@
 		      click: function() {
 				  try {
 					if(LUA.Core.Serial.isConnected()) {
-						// use raw code for file saving, don't LUAfy it
+						// capture output as file....
+						addProcessorGetWatched(waitingGetWatched, 5000);
 						var cmd = 'f = io.open("/wo/script.lua")' + "\n";
+						cmd += "print('<<<<<')\n";
 						cmd += "while true do\n";
 						cmd += "local line = f:read(\"*l\")\n";
 						cmd += "if line == nil then break end\n";
 						cmd += "print(line)\n";
 						cmd += "end\n";
+						cmd += "print('>>>>>')\n";
 						console.log(cmd);
-						// capture output as file....
+
 						//addProcessorGetWatched(waitingGetWatched,5000);
 						  //function waitingGetWatched(data){
 						  //var html;
@@ -150,6 +153,23 @@
       callback(data);
     },module:"send"});
   }
+
+  function waitingGetWatched(data){
+  		var html;
+  		removeProcessorGetWatched();
+  		html = LUA.Core.Utils.escapeHTML(data);
+  		console.log('Received data we were waiting for: ' + html);
+  }
+
+  function addProcessorGetWatched(waitingFunc, maxDuration){
+	  LUA.removeProcessorsByType("getWatched");
+	  console.log('adding output watcher');
+	  LUA.addProcessor("getWatched",{processor:function (data, callback) {
+		waitingFunc(data);
+		callback(data);
+	  }, module:"send", maxDuration: maxDuration} );
+  }
+
   function getMacro(macroGroup,macro,callback){
     $.get("data/lua/macro/" + macroGroup + ".json",function(data){
       var m = JSON.parse(data);
