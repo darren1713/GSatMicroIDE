@@ -18,6 +18,8 @@
   var waitForChar = "";
   var waitForFunc = null;
   var waitForTimer = null;
+  var buffer = [];
+  var bufferIndex = 0;
   //var displayData = [];
   // Text to be displayed in the terminal
   //var termText = [ "" ];
@@ -66,6 +68,22 @@
     // Add stuff we need
     $('<div id="terminal" class="terminal"></div>').appendTo(".editor--terminal .editor__canvas");
     $('<input type="text" id="lua-console" class="console" />').appendTo($('<div id="lua" class="console"></div>').appendTo(".editor--terminal .editor__canvas"));
+    
+    $('#lua').on('keyup', '#lua-console', function(e) {
+        //console.log(e);
+        if(e.which == 38) { // up
+          console.log(buffer.length + ' - ' + bufferIndex);
+          console.log(buffer); // LUA.Core.Terminal.buffer??
+            if(bufferIndex > (buffer.length-1))
+              bufferIndex = 0;
+            if(buffer.length == 0)
+              return;
+            $('#lua-console').val(buffer[bufferIndex]);
+            bufferIndex++;
+        } else if (e.which == 13)  { // enter
+              sendLuaCommand();
+        }
+    });
     //$('<textarea id="terminalfocus" class="terminal__focus" rows="1" cols="1"></textarea>').appendTo(document.body);
 
     // Populate terminal
@@ -92,6 +110,8 @@
 		  var command = lua.val() + "\n";
 		  console.log(command);
 		  LUA.Core.Serial.write(command);
+      buffer.unshift(command);
+      bufferIndex = 0;
 		  lua.val('');
 	  } else {
 		LUA.Core.Notifications.warning("Not connected to GSatMicro");
@@ -116,7 +136,10 @@
         waitForFunc(true);
       }
     }
-    if(LUA.checkProcessor("getWatched")){searchData(bufString);}
+    if(LUA.checkProcessor("getWatched")){
+      console.log('watcher interrupting terminal output');
+      searchData(bufString);
+    }
     else{
 		var term = $('#terminal');
 		term.html(term.html() + bufString.replace(/\n/g,"<br>")); // add received data to terminal screen

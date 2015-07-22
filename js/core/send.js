@@ -61,7 +61,7 @@
 				  try {
 					if(LUA.Core.Serial.isConnected()) {
 						// capture output as file....
-						addProcessorGetWatched(waitingGetWatched, 5000);
+						//addProcessorGetWatched(waitingGetWatched, 5000);
 						var cmd = 'f = io.open("/wo/script.lua")' + "\n";
 						cmd += "print('<<<<<')\n";
 						cmd += "while true do\n";
