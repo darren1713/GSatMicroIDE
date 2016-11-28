@@ -89,12 +89,10 @@ Author: Gordon Williams (gw@pur3.co.uk)
         hasSlashes = false;
         devices.forEach(function(device) { if (device.path.indexOf("/")>=0) hasSlashes=true; });
         if (!hasSlashes) prefix = "/dev/";
-      } else {
-        prefix = device.displayName + " ";
       }
-
+      
       callback(devices.map(function(device) {
-        return prefix+device.path;
+        return device.displayName+":"+prefix+device.path;
       }));
     });
   };
