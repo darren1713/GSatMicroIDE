@@ -120,7 +120,7 @@
     //});
     // Ensure that data from LUA goes to this terminal
     LUA.Core.Serial.startListening(LUA.Core.Terminal.outputDataHandler);
-    LUA.Core.Send.setSerial(9600,false,function(){ LUA.Core.Send.getInfo(); });
+    LUA.Core.Send.setSerial(LUA.Config.BAUD_RATE,false,function(){ LUA.Core.Send.getInfo(); });
   };
 
   /// Give the terminal focus
