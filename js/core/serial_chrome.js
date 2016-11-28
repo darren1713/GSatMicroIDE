@@ -73,7 +73,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
   function setBaud(baudRate){
     //LUA.Plugins.LUAfile.setSerial(baudRate,LUA.Config.Serial_Echo);
   }
-  function setEcho(echo,callback){ LUA.Core.Send.setSerial(9600,echo,callback); }
+  function setEcho(echo,callback){ LUA.Core.Send.setSerial(LUA.Config.BAUD_RATE,echo,callback); }
 
   var startListening=function(callback) {
     var oldListener = readListener;
@@ -92,14 +92,14 @@ Author: Gordon Williams (gw@pur3.co.uk)
       }
 
       callback(devices.map(function(device) {
-        return prefix+device.path;
+        return device.displayName+":"+prefix+device.path;
       }));
     });
   };
 
   var openSerial=function(serialPort, openCallback, disconnectCallback) {
     connectionDisconnectCallback = disconnectCallback;
-    chrome.serial.connect(serialPort, {bitrate: parseInt(LUA.Config.BAUD_RATE)},
+    chrome.serial.connect(serialPort.split(":")[1], {bitrate: parseInt(LUA.Config.BAUD_RATE)},
       function(cInfo) {
         if (!cInfo) {
           console.log("Unable to open device (connectionInfo="+cInfo+")");

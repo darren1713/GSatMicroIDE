@@ -128,7 +128,7 @@
       LUA.Core.Notifications.error("Invalid Serial Port");
       return;
     }
-    LUA.Config.BAUD_RATE = 9600;
+    LUA.Config.BAUD_RATE = LUA.Config.BAUD_RATE;
     LUA.Core.Serial.open(serialPort, function(cInfo) {
       if (cInfo!=undefined) {
 //console.log("Device found (connectionId="+ cInfo.connectionId +")");        
