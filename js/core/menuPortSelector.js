@@ -130,7 +130,7 @@
     }
     LUA.Config.BAUD_RATE = 9600; //Jeff: TODO Unsure why this line is here, set baudrate next...
     LUA.Config.BAUD_RATE = baudRate;
-    LUA.Core.Serial.open(serialPort, function(cInfo) {
+    LUA.Core.Serial.open(serialPort.split(":")[1], function(cInfo) {
       if (cInfo!=undefined) {
 //console.log("Device found (connectionId="+ cInfo.connectionId +")");        
         LUA.Core.Notifications.success("Connected to port "+ serialPort, true);
