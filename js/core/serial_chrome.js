@@ -33,7 +33,7 @@ Author: Gordon Williams (gw@pur3.co.uk)
     LUA.Core.Config.add("BAUD_RATE", {
       section : "Communications",
       name : "Baud Rate",
-      description : "When connecting over serial, this is the baud rate that is used. 9600 is the default for LUA",
+      description : "When connecting over serial, this is the baud rate that is used. 115200 is the default for LUA",
       type : {9600:9600,19200:19200,38400:38400,57600:57600,74880:74880,115200:115200},
       defaultValue : 9600,
       onChange : setBaud
@@ -89,6 +89,8 @@ Author: Gordon Williams (gw@pur3.co.uk)
         hasSlashes = false;
         devices.forEach(function(device) { if (device.path.indexOf("/")>=0) hasSlashes=true; });
         if (!hasSlashes) prefix = "/dev/";
+      } else {
+        prefix = device.displayName + " ";
       }
 
       callback(devices.map(function(device) {
